@@ -11,7 +11,7 @@ pipeline {
             steps {
                 git branch: BRANCH,
                     url: GIT_REPO,
-                    credentialsId: 'b4efd010-b24e-4c56-b027-316b1cdbbba4'
+                    credentialsId: 'gitHub_id'
             }
         }
         stage('Prepare tools') {
