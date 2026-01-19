@@ -1,12 +1,13 @@
 pipeline {
     agent { label 'linuxgit' }
-    
+
     environment {
         GIT_REPO = 'https://github.com/vishnukumar-vv/pipeline-demo.git'
-        BRANCH = 'main'
+        BRANCH   = 'main'
     }
-    
+
     stages {
+
         stage('Checkout repo') {
             steps {
                 git branch: BRANCH,
@@ -14,32 +15,35 @@ pipeline {
                     credentialsId: 'gitHub_id'
             }
         }
+
         stage('Prepare tools') {
             steps {
-                echo 'Installing required tools on ubuntu...'
                 sh '''
                     set -e
-                    
-                    sudo apt-get update -y
-                    
+
+                    sudo apt-get update
                     sudo apt-get install -y \
                         build-essential \
                         python3 \
-                        cmake \
                         python3-pip \
+                        pipx \
+                        cmake \
                         curl
-                    pip3 install --quiet cmakelint
+
+                    pipx ensurepath
+                    pipx install cmakelint
                 '''
             }
         }
+
         stage('Lint') {
             steps {
                 echo 'Running lint checks'
                 sh '''
-                    if [ -f CMakeLists.txt ]; then 
-                        cmakelint CMakeList.txt > lint_report.txt || true
-                    else 
-                        echo "CMakeLists.txt is not found"
+                    if [ -f CMakeLists.txt ]; then
+                        ~/.local/bin/cmakelint CMakeLists.txt > lint_report.txt || true
+                    else
+                        echo "CMakeLists.txt not found" > lint_report.txt
                     fi
                 '''
             }
