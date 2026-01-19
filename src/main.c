@@ -1,22 +1,25 @@
-cmake_minimum_required(VERSION 3.10)
-project(MyFirmware C)
+#include <stdint.h>
+#include <stdio.h>
 
-set(CMAKE_C_STANDARD 11)
+// Simulate an LED toggle function (stub)
+void toggle_led(void) {
+    static int state = 0;
+    state = !state;
+    printf("LED is now %s\n", state ? "ON" : "OFF");
+}
 
-# Set toolchain if needed
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    # Uncomment below if using ARM
-    # set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-    # set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-    find_program(CMAKE_OBJCOPY NAMES arm-none-eabi-objcopy objcopy)
-endif()
+// Simulate delay (not suitable for real-time)
+void delay(unsigned int count) {
+    for (volatile unsigned int i = 0; i < count * 100000; ++i);
+}
 
-add_executable(myfirmware.elf
-    src/main.c
-)
+int main(void) {
+    printf("Starting minimal firmware...\n");
 
-# Add custom command to generate .bin from .elf
-add_custom_command(TARGET myfirmware.elf POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O binary myfirmware.elf myfirmware.bin
-    COMMENT "Generating .bin from .elf"
-)
+    while (1) {
+        toggle_led();
+        delay(10);  // delay to simulate periodic action
+    }
+
+    return 0;  // Never reached
+}
