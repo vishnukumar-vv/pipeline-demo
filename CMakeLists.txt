@@ -20,3 +20,14 @@ add_custom_command(TARGET myfirmware.elf POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary myfirmware.elf myfirmware.bin
     COMMENT "Generating .bin from .elf"
 )
+# --------------------------
+# Unit Testing Section (No framework)
+# --------------------------
+enable_testing()
+
+add_executable(unit_tests
+    tests/test_main.c
+)
+
+add_test(NAME firmware_unit_tests COMMAND unit_tests)
+
