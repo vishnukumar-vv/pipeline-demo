@@ -30,8 +30,7 @@ pipeline {
                         cmake \
                         curl
 
-                    pipx ensurepath
-                    pipx install cmakelint
+                    pipx install cmakelint || true
                 '''
             }
         }
@@ -52,12 +51,15 @@ pipeline {
                     archiveArtifacts artifacts: 'lint_report.txt', fingerprint: true
                 }
             }
-            stage('Build') {
+        }
+
+        stage('Build') {
             steps {
                 echo 'Running build with CMake...'
                 sh '''
                     if [ -f CMakeLists.txt ]; then
-                        mkdir -p build
+                        rm -rf build
+                        mkdir build
                         cd build
                         cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
                         make -j$(nproc)
@@ -69,6 +71,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Unit Tests') {
             steps {
                 sh '''
