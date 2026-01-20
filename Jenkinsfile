@@ -52,6 +52,35 @@ pipeline {
                     archiveArtifacts artifacts: 'lint_report.txt', fingerprint: true
                 }
             }
+            stage('Build') {
+            steps {
+                echo 'Running build with CMake...'
+                sh '''
+                    if [ -f CMakeLists.txt ]; then
+                        mkdir -p build
+                        cd build
+                        cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+                        make -j$(nproc)
+                        cp compile_commands.json ..
+                    else
+                        echo "CMakeLists.txt not found!"
+                        exit 1
+                    fi
+                '''
+            }
+        }
+        stage('Unit Tests') {
+            steps {
+                sh '''
+                    cd build
+                    ctest --output-on-failure --test-output-junit test-results.xml || true
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'build/test-results.xml'
+                }
+            }
         }
     }
 }
