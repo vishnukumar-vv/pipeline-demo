@@ -1,6 +1,8 @@
 pipeline {
     agent { label 'linuxgit' }
-
+    options {
+        timestamps()
+    }
     environment {
         GIT_REPO = 'https://github.com/vishnukumar-vv/pipeline-demo.git'
         BRANCH   = 'main'
