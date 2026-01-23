@@ -19,24 +19,24 @@ pipeline {
             }
         }
 
-        stage('Prepare tools') {
-            steps {
-                sh '''
-                    set -e
-
-                    sudo apt-get update
-                    sudo apt-get install -y \
-                        build-essential \
-                        python3 \
-                        python3-pip \
-                        pipx \
-                        cmake \
-                        curl
-
-                    pipx install cmakelint || true
-                '''
-            }
-        }
+//        stage('Prepare tools') {
+//            steps {
+//                sh '''
+//                    set -e
+//
+//                  sudo apt-get update
+//                  sudo apt-get install -y \
+//                        build-essential \
+//                        python3 \
+//                      python3-pip \
+//                      pipx \
+//                      cmake \
+//                      curl
+//
+//                    pipx install cmakelint || true
+//                '''
+//            }
+//        }
 
         stage('Lint') {
             steps {
